@@ -59,11 +59,11 @@ exports.handler = async function(event, context) {
         'Authorization': 'Basic ' + Buffer.from(`${oxyUsername}:${oxyPassword}`).toString('base64')
       },
       body: JSON.stringify({
-        source: 'google_search',
-        query: searchQuery,
-        parse: true,
-        limit: 10
-      })
+  source: 'google_search',
+  query: searchQuery,
+  parse: true,
+  limit: searchData.leadCount || 10  // Use the selected lead count
+})
     });
 
     if (!response.ok) {
