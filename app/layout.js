@@ -8,7 +8,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      <body className="antialiased">
         {children}
       </body>
     </html>
