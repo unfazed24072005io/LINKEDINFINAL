@@ -21,53 +21,56 @@ export default function Home() {
   });
 
   const handleScrape = async (e) => {
-    e.preventDefault();
-    if (!searchData.designation || !searchData.location) return;
-    
-    setLoading(true);
-    try {
-      const response = await fetch('/.netlify/functions/scrape', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(searchData),
-      });
+  e.preventDefault();
+  if (!searchData.designation || !searchData.location) return;
+  
+  setLoading(true);
+  try {
+    const response = await fetch('/.netlify/functions/scrape', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(searchData),
+    });
 
-      const data = await response.json();
-      if (data.success) {
-        setProfiles(data.profiles);
-      } else {
-        alert(`Error: ${data.error}`);
-      }
-    } catch (error) {
-      alert('Search failed. Please try again.');
-    } finally {
-      setLoading(false);
+    const data = await response.json();
+    if (data.success) {
+      setProfiles(data.profiles);
+    } else {
+      alert(`Error: ${data.error}${data.note ? '\n' + data.note : ''}`);
     }
-  };
+  } catch (error) {
+    alert(`Network error: ${error.message}`);
+  } finally {
+    setLoading(false);
+  }
+};
 
-  const handleApolloEnrichment = async () => {
-    if (!profiles.length) return;
-    
-    setApolloLoading(true);
-    try {
-      const response = await fetch('/.netlify/functions/apollo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ profiles }),
-      });
+const handleApolloEnrichment = async () => {
+  if (!profiles.length) return;
+  
+  setApolloLoading(true);
+  try {
+    const response = await fetch('/.netlify/functions/apollo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ profiles }),
+    });
 
-      const data = await response.json();
-      if (data.success) {
-        setProfiles(data.profiles);
-      } else {
-        alert(`Apollo enrichment failed: ${data.error}`);
+    const data = await response.json();
+    if (data.success) {
+      setProfiles(data.profiles);
+      if (data.note) {
+        console.log('Apollo note:', data.note);
       }
-    } catch (error) {
-      alert('Apollo enrichment failed. Please try again.');
-    } finally {
-      setApolloLoading(false);
+    } else {
+      alert(`Apollo enrichment failed: ${data.error}`);
     }
-  };
+  } catch (error) {
+    alert(`Network error: ${error.message}`);
+  } finally {
+    setApolloLoading(false);
+  }
+};
 
   const exportToCSV = () => {
     if (!profiles.length) return;
