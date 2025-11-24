@@ -33,52 +33,53 @@ exports.handler = async function(event, context) {
 
     const apolloApiKey = process.env.APOLLO_API_KEY;
     
-    if (!apolloApiKey) {
-      // If no Apollo key, return profiles with enrichment flags but no real data
-      const enriched = profiles.map(profile => ({
-        ...profile,
-        apolloEnriched: false,
-        confidence: 'low',
-        note: 'Apollo API key not configured'
-      }));
-      
+    if (!apolloApiKey || apolloApiKey === 'your_actual_apollo_key_here') {
       return {
         statusCode: 200,
         headers: { 'Access-Control-Allow-Origin': '*' },
         body: JSON.stringify({
           success: true,
-          profiles: enriched,
-          note: 'Add APOLLO_API_KEY environment variable for real enrichment'
+          profiles: profiles.map(profile => ({
+            ...profile,
+            apolloEnriched: false,
+            confidence: 'low',
+            note: 'Add APOLLO_API_KEY for contact enrichment'
+          })),
+          note: 'APOLLO_API_KEY environment variable required for contact enrichment'
         })
       };
     }
 
     // REAL APOLLO API INTEGRATION
+    console.log('Using REAL Apollo API for contact enrichment');
+    
     const enrichedProfiles = [];
     
-    for (const profile of profiles.slice(0, 5)) { // Limit to avoid rate limits
+    for (const profile of profiles.slice(0, 10)) { // Limit to avoid rate limits
       try {
-        const apolloResponse = await fetch('https://api.apollo.io/v1/mixed_people/search', {
+        // Search for person in Apollo
+        const searchResponse = await fetch('https://api.apollo.io/v1/mixed_people/search', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'X-Api-Key': apolloApiKey
           },
           body: JSON.stringify({
-            q_keywords: `"${profile.name}" "${profile.title}"`,
+            q_keywords: `"${profile.name}" "${profile.title}" "${profile.location}"`,
             page: 1,
             per_page: 1
           })
         });
 
-        if (!apolloResponse.ok) {
-          throw new Error(`Apollo API error: ${apolloResponse.status}`);
+        if (!searchResponse.ok) {
+          throw new Error(`Apollo API error: ${searchResponse.status}`);
         }
 
-        const apolloData = await apolloResponse.json();
+        const searchData = await searchResponse.json();
         
-        if (apolloData.people && apolloData.people.length > 0) {
-          const apolloPerson = apolloData.people[0];
+        if (searchData.people && searchData.people.length > 0) {
+          const apolloPerson = searchData.people[0];
+          
           enrichedProfiles.push({
             ...profile,
             apolloEnriched: true,
@@ -86,17 +87,19 @@ exports.handler = async function(event, context) {
             verifiedEmail: apolloPerson.email || null,
             directPhone: apolloPerson.phone_numbers?.[0]?.sanitized_number || null,
             company: apolloPerson.organization?.name || profile.company,
-            confidence: 'high',
+            confidence: calculateConfidence(apolloPerson),
             apolloUrl: `https://app.apollo.io/#/people/${apolloPerson.id}`,
-            lastRefreshed: apolloPerson.last_updated,
+            lastRefreshed: apolloPerson.updated_at,
             hasEmail: !!apolloPerson.email,
-            hasDirectPhone: apolloPerson.phone_numbers?.length > 0 ? "Yes" : "No"
+            hasDirectPhone: !!apolloPerson.phone_numbers?.length
           });
         } else {
+          // No Apollo match found
           enrichedProfiles.push({
             ...profile,
             apolloEnriched: false,
-            confidence: 'low'
+            confidence: 'low',
+            note: 'No contact data found in Apollo'
           });
         }
       } catch (error) {
@@ -116,7 +119,7 @@ exports.handler = async function(event, context) {
         success: true,
         profiles: enrichedProfiles,
         count: enrichedProfiles.length,
-        source: 'apollo'
+        source: 'apollo_real'
       })
     };
 
@@ -132,3 +135,14 @@ exports.handler = async function(event, context) {
     };
   }
 };
+
+function calculateConfidence(apolloPerson) {
+  let score = 0;
+  if (apolloPerson.email) score += 3;
+  if (apolloPerson.phone_numbers?.length > 0) score += 2;
+  if (apolloPerson.organization) score += 1;
+  
+  if (score >= 4) return 'high';
+  if (score >= 2) return 'medium';
+  return 'low';
+}
