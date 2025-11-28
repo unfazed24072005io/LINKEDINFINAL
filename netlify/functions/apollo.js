@@ -58,18 +58,20 @@ exports.handler = async function(event, context) {
     for (const profile of profiles.slice(0, 10)) { // Limit to avoid rate limits
       try {
         // Search for person in Apollo
-        const searchResponse = await fetch('https://api.apollo.io/v1/mixed_people/search', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Api-Key': apolloApiKey
-          },
-          body: JSON.stringify({
-            q_keywords: `"${profile.name}" "${profile.title}" "${profile.location}"`,
-            page: 1,
-            per_page: 1
-          })
-        });
+        // In netlify/functions/apollo.js, enhance the search with industry context
+const searchResponse = await fetch('https://api.apollo.io/v1/mixed_people/search', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Api-Key': apolloApiKey
+  },
+  body: JSON.stringify({
+    q_keywords: `"${profile.name}" "${profile.title}" "${profile.location}" "${profile.industry}"`,
+    page: 1,
+    per_page: 1,
+    organization_industries: [profile.industry] // Use industry for better matching
+  })
+});
 
         if (!searchResponse.ok) {
           throw new Error(`Apollo API error: ${searchResponse.status}`);

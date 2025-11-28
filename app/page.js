@@ -9,11 +9,23 @@ export default function Home() {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [apolloLoading, setApolloLoading] = useState(false);
-  const [searchData, setSearchData] = useState({
+   const [searchData, setSearchData] = useState({
     designation: '',
     location: '',
-    leadCount: 10 // Default lead count
+    industry: 'all', // Add industry field
+    leadCount: 10
   });
+const industryOptions = [
+    { value: 'all', label: 'All Industries' },
+    { value: 'technology', label: 'Technology' },
+    { value: 'healthcare', label: 'Healthcare' },
+    { value: 'finance', label: 'Finance' },
+    { value: 'education', label: 'Education' },
+    { value: 'manufacturing', label: 'Manufacturing' },
+    { value: 'retail', label: 'Retail' },
+    { value: 'real_estate', label: 'Real Estate' },
+    { value: 'energy', label: 'Energy' }
+  ];
 
   const handleScrape = async (e) => {
     e.preventDefault();
@@ -184,6 +196,22 @@ export default function Home() {
                     className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-white placeholder-gray-400"
                   />
                 </div>
+ <div>
+    <label className="block text-sm font-medium text-cyan-200 mb-2">
+      Industry
+    </label>
+    <select
+      value={searchData.industry}
+      onChange={(e) => setSearchData({...searchData, industry: e.target.value})}
+      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-white"
+    >
+      {industryOptions.map(option => (
+        <option key={option.value} value={option.value} className="bg-slate-800">
+          {option.label}
+        </option>
+      ))}
+    </select>
+  </div>
 
                 <div>
                   <label className="block text-sm font-medium text-cyan-200 mb-2">
@@ -298,6 +326,16 @@ export default function Home() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex-1">
+<div className="flex items-center space-x-2 mb-2">
+        <span className="text-xs px-2 py-1 bg-purple-500/20 text-purple-300 rounded-full border border-purple-500/30">
+          {profile.industry || 'general'}
+        </span>
+        {profile.relevanceScore > 7 && (
+          <span className="text-xs px-2 py-1 bg-green-500/20 text-green-300 rounded-full border border-green-500/30">
+            High Match
+          </span>
+        )}
+      </div>
                               <div className="flex items-center space-x-3 mb-2">
                                 <h4 className="text-lg font-bold text-white">
                                   {profile.name}
