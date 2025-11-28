@@ -102,31 +102,57 @@ const industryOptions = [
   };
 
   const exportToCSV = () => {
-    if (!profiles.length) return;
-    
-    const headers = ['Name', 'Title', 'Location', 'Company', 'Email', 'Phone', 'Profile URL', 'Status'];
-    const csvData = profiles.map(p => [
-      p.name, 
-      p.title, 
-      p.location, 
-      p.company, 
-      p.verifiedEmail || 'Not available', 
-      p.directPhone || 'Not available', 
-      p.profileUrl,
-      p.apolloEnriched ? 'Contact Enriched' : 'Basic Profile'
-    ]);
-    const csvContent = [headers, ...csvData].map(row => 
-      row.map(field => `"${field}"`).join(',')
-    ).join('\n');
-    
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `leads_${searchData.designation}_${searchData.location}_${Date.now()}.csv`;
-    a.click();
-  };
+  if (!profiles.length) return;
+  
+  // Enhanced headers with all important fields
+  const headers = [
+    'ID', 'Name', 'Title', 'Company', 'Industry', 
+    'Location', 'LinkedIn URL', 'Email', 'Phone', 
+    'Email Accuracy', 'Phone Status', 'Confidence Level',
+    'Enrichment Status', 'Last Updated', 'Notes'
+  ];
 
+  // Precise data mapping
+  const csvData = profiles.map((p, index) => [
+    index + 1, // ID
+    `"${p.name || 'N/A'}"`, // Name
+    `"${p.title || 'N/A'}"`, // Title
+    `"${p.company || 'N/A'}"`, // Company
+    `"${p.industry || 'N/A'}"`, // Industry
+    `"${p.location || 'N/A'}"`, // Location
+    `"${p.profileUrl || 'N/A'}"`, // LinkedIn URL
+    `"${p.verifiedEmail || 'Not Available'}"`, // Email
+    `"${p.directPhone || 'Not Available'}"`, // Phone
+    `"${p.emailAccuracy || 'Unknown'}"`, // Email Accuracy
+    `"${p.hasDirectPhone ? 'Available' : 'Not Available'}"`, // Phone Status
+    `"${p.confidence || 'low'}"`, // Confidence Level
+    `"${p.apolloEnriched ? 'Enriched' : 'Basic'}"`, // Enrichment Status
+    `"${new Date().toISOString().split('T')[0]}"`, // Last Updated
+    `"${p.note || 'No notes'}"` // Notes
+  ]);
+
+  // Create CSV content with proper formatting
+  const csvContent = [
+    headers.join(','),
+    ...csvData
+  ].join('\n');
+
+  // Create and download file
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  
+  // Professional filename
+  const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+  const filename = `Leads_${searchData.designation}_${searchData.location}_${timestamp}.csv`;
+  link.setAttribute('download', filename);
+  
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
   const getConfidenceColor = (confidence) => {
     switch (confidence) {
       case 'high': return 'bg-green-500/20 text-green-300 border border-green-500/30';
