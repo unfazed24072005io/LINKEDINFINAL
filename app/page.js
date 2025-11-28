@@ -15,17 +15,35 @@ export default function Home() {
     industry: 'all', // Add industry field
     leadCount: 10
   });
+// Industry options - COMPLETE LIST
 const industryOptions = [
-    { value: 'all', label: 'All Industries' },
-    { value: 'technology', label: 'Technology' },
-    { value: 'healthcare', label: 'Healthcare' },
-    { value: 'finance', label: 'Finance' },
-    { value: 'education', label: 'Education' },
-    { value: 'manufacturing', label: 'Manufacturing' },
-    { value: 'retail', label: 'Retail' },
-    { value: 'real_estate', label: 'Real Estate' },
-    { value: 'energy', label: 'Energy' }
-  ];
+  { value: 'all', label: 'All Industries' },
+  { value: 'recruitment', label: 'Recruitment & Staffing' },
+  { value: 'technology', label: 'Technology' },
+  { value: 'healthcare', label: 'Healthcare' },
+  { value: 'finance', label: 'Finance & Banking' },
+  { value: 'education', label: 'Education' },
+  { value: 'manufacturing', label: 'Manufacturing' },
+  { value: 'retail', label: 'Retail & E-commerce' },
+  { value: 'real_estate', label: 'Real Estate' },
+  { value: 'energy', label: 'Energy & Utilities' },
+  { value: 'transportation', label: 'Transportation & Logistics' },
+  { value: 'hospitality', label: 'Hospitality & Tourism' },
+  { value: 'entertainment', label: 'Media & Entertainment' },
+  { value: 'telecom', label: 'Telecommunications' },
+  { value: 'biotech', label: 'Biotechnology & Pharma' },
+  { value: 'construction', label: 'Construction' },
+  { value: 'agriculture', label: 'Agriculture & Food' },
+  { value: 'automotive', label: 'Automotive' },
+  { value: 'aerospace', label: 'Aerospace & Defense' },
+  { value: 'legal', label: 'Legal Services' },
+  { value: 'consulting', label: 'Consulting' },
+  { value: 'nonprofit', label: 'Non-Profit' },
+  { value: 'government', label: 'Government' },
+  { value: 'insurance', label: 'Insurance' },
+  { value: 'marketing', label: 'Marketing & Advertising' },
+  { value: 'hr', label: 'Human Resources' }
+];
 
   const handleScrape = async (e) => {
     e.preventDefault();

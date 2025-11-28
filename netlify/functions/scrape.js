@@ -2,38 +2,118 @@ const fetch = require('node-fetch');
 
 // Industry mapping for better search targeting
 const INDUSTRY_MAPPING = {
+  recruitment: [
+    // Core Recruitment Roles
+    "Recruiter", "Talent Acquisition Specialist", "Technical Recruiter", "Corporate Recruiter",
+    "Senior Recruiter", "Lead Recruiter", "Recruitment Manager", "Talent Acquisition Manager",
+    "Recruitment Consultant", "Staffing Manager", "Recruitment Coordinator", "Talent Sourcer",
+    "Recruitment Director", "Head of Talent Acquisition", "VP of Talent Acquisition", 
+    "Chief People Officer", "Talent Partner", "HR Recruiter", "Recruitment Analyst", 
+    "Recruitment Operations Manager",
+
+    // Executive Search & Leadership
+    "Executive Recruiter", "Executive Search Consultant", "Headhunter", "Executive Search Partner",
+    "Retained Search Consultant", "Executive Talent Acquisition", "C-Level Recruiter", 
+    "Board Recruiter", "Leadership Recruiter", "Senior Executive Recruiter", 
+    "Management Recruiter", "Director Level Recruiter", "VP Recruiter", 
+    "Executive Search Director", "Partner Executive Search",
+
+    // Technology Recruitment
+    "IT Recruiter", "Technology Recruiter", "Software Recruiter", "Engineering Recruiter",
+    "Tech Talent Acquisition", "IT Recruitment Manager", "Software Engineering Recruiter",
+    "DevOps Recruiter", "Cloud Recruiter", "AI Recruiter", "Machine Learning Recruiter",
+    "Data Science Recruiter", "Cyber Security Recruiter", "Network Recruiter",
+    "Infrastructure Recruiter", "Mobile App Recruiter", "Frontend Recruiter",
+    "Backend Recruiter", "Full Stack Recruiter", "QA Recruiter", "UX UI Recruiter",
+
+    // Healthcare Recruitment
+    "Healthcare Recruiter", "Medical Recruiter", "Nurse Recruiter", "Clinical Recruiter",
+    "Physician Recruiter", "Hospital Recruiter", "Pharmaceutical Recruiter",
+    "Medical Device Recruiter", "Healthcare Staffing Manager", "Clinical Research Recruiter",
+    "Mental Health Recruiter", "Dental Recruiter", "Veterinary Recruiter",
+
+    // Finance & Legal Recruitment
+    "Finance Recruiter", "Accounting Recruiter", "Banking Recruiter", "Financial Services Recruiter",
+    "Investment Banking Recruiter", "Wealth Management Recruiter", "Insurance Recruiter",
+    "Legal Recruiter", "Law Firm Recruiter", "Compliance Recruiter", "Risk Management Recruiter",
+
+    // Sales & Marketing Recruitment
+    "Sales Recruiter", "Marketing Recruiter", "Digital Marketing Recruiter", "Media Recruiter",
+    "Advertising Recruiter", "Brand Recruiter", "E-commerce Recruiter", "Retail Recruiter",
+
+    // Industry Specific Recruitment
+    "Construction Recruiter", "Manufacturing Recruiter", "Supply Chain Recruiter",
+    "Logistics Recruiter", "Oil and Gas Recruiter", "Energy Recruiter", "Renewable Energy Recruiter",
+    "Aviation Recruiter", "Aerospace Recruiter", "Defense Recruiter", "Government Recruiter",
+    "Nonprofit Recruiter", "Education Recruiter", "Hospitality Recruiter",
+
+    // Volume & Campus Recruitment
+    "Volume Recruiter", "Mass Recruitment", "High Volume Recruiter", "Bulk Hiring Manager",
+    "University Recruiter", "Campus Recruiter", "College Recruiter", "Graduate Recruiter",
+    "Early Career Recruiter", "Entry Level Recruiter", "Campus Recruitment Manager",
+
+    // Diversity & International
+    "Diversity Recruiter", "DEI Recruiter", "Inclusion Recruiter", "Diversity Talent Acquisition",
+    "International Recruiter", "Global Recruiter", "Overseas Recruiter", "Expatriate Recruiter",
+
+    // Agency & Staffing
+    "Staffing Specialist", "Staffing Consultant", "Temporary Staffing Manager",
+    "Contract Recruiter", "Contract Staffing Manager", "Permanent Placement Recruiter",
+    "Agency Recruiter", "Staffing Agency Manager", "Recruitment Agency Director",
+    "RPO Recruiter", "Recruitment Process Outsourcing", "Managed Service Provider Recruiter",
+
+    // Support & Coordination
+    "Recruitment Administrator", "Recruitment Assistant", "Talent Acquisition Coordinator",
+    "Boolean Sourcer", "LinkedIn Recruiter", "Social Media Recruiter", "Recruitment Researcher",
+
+    // HR & Business Roles
+    "HR Manager Recruitment", "People Operations", "HR Business Partner Recruitment",
+    "Talent Development Manager", "Workforce Planning Manager", "Recruitment Account Manager",
+    "Staffing Sales", "Business Development Manager Staffing", "Client Relationship Manager Recruitment"
+  ],
+
   technology: [
     "Software Engineer", "Developer", "Data Scientist", "Product Manager", 
     "CTO", "Software Architect", "DevOps Engineer", "AI Engineer",
-    "Machine Learning Engineer", "Cloud Architect", "IT Manager"
+    "Machine Learning Engineer", "Cloud Architect", "IT Manager",
+    "UX Designer", "QA Engineer", "Systems Administrator", "Network Engineer"
   ],
+
   healthcare: [
     "Doctor", "Physician", "Surgeon", "Medical Director", "Healthcare Manager",
-    "Nurse Practitioner", "Pharmacist", "Medical Researcher", "Hospital Administrator"
+    "Nurse Practitioner", "Pharmacist", "Medical Researcher", "Hospital Administrator",
+    "Dentist", "Therapist", "Healthcare Consultant", "Clinical Director"
   ],
+
   finance: [
     "Financial Analyst", "Investment Banker", "Portfolio Manager", "CFO",
-    "Accountant", "Financial Advisor", "Risk Manager", "Wealth Manager"
+    "Accountant", "Financial Advisor", "Risk Manager", "Wealth Manager",
+    "Bank Manager", "Credit Analyst", "Actuary", "Financial Controller"
   ],
+
   education: [
     "Professor", "Teacher", "Educator", "Academic Dean", "School Principal",
-    "Researcher", "Education Director", "Curriculum Developer"
+    "Researcher", "Education Director", "Curriculum Developer", "Librarian"
   ],
+
   manufacturing: [
     "Production Manager", "Operations Manager", "Quality Engineer",
     "Supply Chain Manager", "Manufacturing Engineer", "Plant Manager"
   ],
+
   retail: [
     "Store Manager", "Retail Manager", "Sales Manager", "Merchandising Manager",
     "E-commerce Manager", "Brand Manager", "Marketing Manager"
   ],
+
   real_estate: [
     "Real Estate Agent", "Property Manager", "Real Estate Broker",
-    "Commercial Real Estate", "Real Estate Developer"
+    "Commercial Real Estate", "Real Estate Developer", "Leasing Agent"
   ],
+
   energy: [
     "Energy Engineer", "Renewable Energy Specialist", "Oil and Gas Engineer",
-    "Sustainability Manager", "Environmental Engineer"
+    "Sustainability Manager", "Environmental Engineer", "Power Systems Engineer"
   ]
 };
 
